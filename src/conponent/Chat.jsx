@@ -10,11 +10,14 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { auth, db } from "../firebase-config";
 import { SendHorizontalIcon } from "lucide-react";
-
+import { signOut } from "firebase/auth";
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
 export const Chat = (props) => {
-  const { room } = props;
+  const { room, setIsAuth, setRoom } = props;
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [showProfile, setShowProfile] = useState(false);
   const messagesRef = collection(db, "messages");
 
   useEffect(() => {
@@ -34,7 +37,13 @@ export const Chat = (props) => {
 
     return () => unsuscribe();
   }, []);
+  const handleSignOut = async () => {
+    await signOut(auth);
+    cookies.remove("auth-token");
+    setIsAuth(false);
 
+    setRoom(null);
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -54,40 +63,66 @@ export const Chat = (props) => {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
   return (
-    <div className="flex items-center flex-col justify-center ">
-      <h1 className="font-extrabold text-[1.5rem]">
-        Welcome to {room.toUpperCase()}
-      </h1>
-      <div className=" rounded-4xl h-[80vh] overflow-auto w-[80%] bg-black/50 px-10 pb-5">
+    <div className="flex items-center flex-col  bg-black/50 justify-center pt-[10vh] pb-[15vh] ">
+      <div className=" h-[90vh] overflow-auto w-full pb-5">
+        <div className="flex justify-between items-end fixed top-0 h-[10vh] py-2 px-10 bg-black/50 w-full backdrop-blur-md">
+          <h1 className="font-extrabold text-[1.5rem] px-10 text-white">
+            You are in {room}
+          </h1>
+          <img
+            onClick={() => setShowProfile(!showProfile)}
+            src={auth.currentUser.photoURL}
+            className="w-[50px] rounded-full cursor-pointer"
+            alt="profile"
+          />
+          {showProfile && (
+            <div className="absolute top-[100%] mt-[5px] flex right-[20px] backdrop-blur-md bg-black/35 justify-center w-[200px] h-[10vh] rounded-3xl items-center">
+              <button
+                onClick={handleSignOut}
+                className=" hover:bg-black/50 hover:border-white text-white transition-all duration-600 ease border-2  w-[150px] mt-1 p-2  h-fit rounded-2xl cursor-pointer"
+              >
+                Sign out
+              </button>
+            </div>
+          )}
+        </div>
+
         {messages.map((message) => (
-          <div key={message.id} className="flex items-center py-1 gap-2">
+          <div
+            key={message.id}
+            className=" mt-5 flex items-center py-1 px-10 gap-2"
+          >
             <img
               src={message.userAvthr}
               alt="logo"
               className="rounded-full w-10"
             />
-            <p className="font-semibold text-black">
-              <span className="text-white font-bold ">{message.user} : </span>
-              {message.text}
-            </p>
+            <div className="font-semibold text-black flex flex-col">
+              <span className="text-white font-bold">{message.user} :</span>
+              <span className="bg-black/20 mx-[10px] px-4 py-[5px] rounded-3xl w-fit mt-1 break-words max-w-[300px]">
+                {message.text}
+              </span>
+            </div>
+
             <div ref={bottomRef} />
           </div>
         ))}
       </div>
       <form
-        className=" justify-center mt-2 flex w-[80%]"
+        className=" justify-center mt-50 mb-[30px] w-full fixed bottom-0 flex "
         onSubmit={handleSubmit}
       >
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          className="bg-green-800/20 h-[5vh] flex w-[80%] rounded-4xl px-5 "
+          className="bg-white/50 backdrop-blur-md h-[8vh] border-2 border-black flex w-[80%] rounded-l-4xl "
         />
         <button
           type="submit"
-          className="flex items-center bg-green-500 px-5 rounded-3xl"
+          className="flex items-center bg-green-500 px-7 border-2 border-black rounded-r-3xl"
         >
           <SendHorizontalIcon color="white" />
         </button>
