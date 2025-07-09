@@ -65,8 +65,8 @@ export const Chat = (props) => {
   }, [messages]);
 
   return (
-    <div className="flex items-center flex-col  bg-black/50 justify-center pt-[10vh] pb-[15vh] ">
-      <div className=" h-[90vh] overflow-auto w-full pb-5">
+    <>
+      <div>
         <div className="flex justify-between items-end fixed top-0 h-[10vh] py-2 px-10 bg-black/50 w-full backdrop-blur-md">
           <h1 className="font-extrabold text-[1.5rem] px-10 text-white">
             You are in {room}
@@ -88,45 +88,48 @@ export const Chat = (props) => {
             </div>
           )}
         </div>
-
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className=" mt-5 flex items-center py-1 px-10 gap-2"
-          >
-            <img
-              src={message.userAvthr}
-              alt="logo"
-              className="rounded-full w-10"
-            />
-            <div className="font-semibold text-black flex flex-col">
-              <span className="text-white font-bold">{message.user} :</span>
-              <span className="bg-black/20 mx-[10px] px-4 py-[5px] rounded-3xl w-fit mt-1 break-words max-w-[300px]">
-                {message.text}
-              </span>
-            </div>
-
-            <div ref={bottomRef} />
-          </div>
-        ))}
       </div>
-      <form
-        className=" justify-center mt-50 mb-[30px] w-full fixed bottom-0 flex "
-        onSubmit={handleSubmit}
-      >
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          className="bg-white/50 backdrop-blur-md h-[8vh] border-2 border-black flex w-[80%] rounded-l-4xl "
-        />
-        <button
-          type="submit"
-          className="flex items-center bg-green-500 px-7 border-2 border-black rounded-r-3xl"
+      <div className="flex items-center flex-col bg-black/50 justify-start pt-[10vh] pb-[15vh] min-h-screen">
+        <div className="w-full overflow-auto">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className=" mt-5 flex items-center py-1 px-10 gap-2"
+            >
+              <img
+                src={message.userAvthr}
+                alt="logo"
+                className="rounded-full w-10"
+              />
+              <div className="font-semibold text-black flex flex-col">
+                <span className="text-white font-bold">{message.user} :</span>
+                <span className="bg-black/20 mx-[10px] px-4 py-[5px] rounded-3xl w-fit mt-1 break-words max-w-[300px]">
+                  {message.text}
+                </span>
+              </div>
+
+              <div ref={bottomRef} />
+            </div>
+          ))}
+        </div>
+        <form
+          className=" justify-center mt-50 mb-[30px] w-full fixed bottom-0 flex "
+          onSubmit={handleSubmit}
         >
-          <SendHorizontalIcon color="white" />
-        </button>
-      </form>
-    </div>
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            className="bg-white/50 backdrop-blur-md h-[8vh] border-2 border-black flex w-[80%] rounded-l-4xl "
+          />
+          <button
+            type="submit"
+            className="flex items-center bg-green-500 px-7 border-2 border-black rounded-r-3xl"
+          >
+            <SendHorizontalIcon color="white" />
+          </button>
+        </form>
+      </div>
+    </>
   );
 };
