@@ -22,11 +22,7 @@ export const Auth = ({ setIsAuth }) => {
           className="flex items-center justify-center p-2 cursor-pointer bg-white border-2 border-black w-[120px] px-5 gap-[5px] rounded-3xl  hover:bg-black hover:text-white transition-all duration-600 ease"
           onClick={signInWithGoogle}
         >
-          <img
-            className="w-5 h-5"
-            src="../src/assets/google-icon.svg"
-            alt="Google Logo"
-          />
+          <img className="w-5 h-5" src="/google-icon.svg" alt="Google Logo" />
           Sign In
         </button>
       </div>
