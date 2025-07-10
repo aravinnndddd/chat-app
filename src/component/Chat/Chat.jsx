@@ -8,13 +8,10 @@ import {
   where,
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { auth, db } from "../firebase-config";
-import { SendHorizontalIcon } from "lucide-react";
-import { signOut } from "firebase/auth";
-import Cookies from "universal-cookie";
-const cookies = new Cookies();
+import { auth, db } from "../../firebase-config";
+import { CopyIcon, SendHorizontalIcon } from "lucide-react";
 export const Chat = (props) => {
-  const { room, setIsAuth, setRoom } = props;
+  const { room, setRoom, handleSignOut } = props;
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [showProfile, setShowProfile] = useState(false);
@@ -31,19 +28,13 @@ export const Chat = (props) => {
       snapshot.forEach((doc) => {
         messages.push({ ...doc.data(), id: doc.id });
       });
-      console.log(messages);
+
       setMessages(messages);
     });
 
     return () => unsuscribe();
   }, []);
-  const handleSignOut = async () => {
-    await signOut(auth);
-    cookies.remove("auth-token");
-    setIsAuth(false);
 
-    setRoom(null);
-  };
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -63,13 +54,35 @@ export const Chat = (props) => {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+  const CopySwitch = ({ textToCopy }) => {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000); // Reset after 2s
+      });
+    };
+    return (
+      <CopyIcon
+        onClick={handleCopy}
+        className={`transition-all duration-300 cursor-pointer ${
+          copied ? " text-[#FFD5A1]" : " text-white"
+        }`}
+      />
+    );
+  };
 
   return (
     <>
       <div>
         <div className="flex justify-between items-end fixed top-0 h-[10vh] py-2 px-10 bg-black/50 w-full backdrop-blur-md">
-          <h1 className="font-extrabold text-[1.5rem] px-10 text-white">
-            You are in {room}
+          <h1 className="font-extrabold flex items-center  text-[1.5rem] px-10 text-white">
+            Copy your secret Key{" "}
+            <span className="ml-2">
+              {" "}
+              <CopySwitch textToCopy={room} />
+            </span>
           </h1>
           <img
             onClick={() => setShowProfile(!showProfile)}
@@ -78,7 +91,13 @@ export const Chat = (props) => {
             alt="profile"
           />
           {showProfile && (
-            <div className="absolute top-[100%] mt-[5px] flex right-[20px] backdrop-blur-md bg-black/35 justify-center w-[200px] h-[10vh] rounded-3xl items-center">
+            <div className="absolute top-[100%] mt-[5px] p-5 flex flex-col right-[20px] backdrop-blur-md bg-black/35 justify-center w-[200px]  rounded-3xl items-center">
+              <button
+                onClick={() => setRoom(null)}
+                className=" hover:bg-black/50 hover:border-white text-white transition-all duration-600 ease border-2  w-[150px] mt-1 p-2  h-fit rounded-2xl cursor-pointer"
+              >
+                Exit room
+              </button>
               <button
                 onClick={handleSignOut}
                 className=" hover:bg-black/50 hover:border-white text-white transition-all duration-600 ease border-2  w-[150px] mt-1 p-2  h-fit rounded-2xl cursor-pointer"
@@ -89,21 +108,25 @@ export const Chat = (props) => {
           )}
         </div>
       </div>
-      <div className="flex items-center flex-col bg-black/50 justify-start pt-[10vh] pb-[15vh] min-h-screen">
+      <div className="flex items-center flex-col bg-[#1b1b1b] justify-start pt-[10vh] pb-[15vh] min-h-screen">
         <div className="w-full overflow-auto">
           {messages.map((message) => (
             <div
               key={message.id}
               className=" mt-5 flex items-center py-1 px-10 gap-2"
             >
-              <img
-                src={message.userAvthr}
-                alt="logo"
-                className="rounded-full w-10"
-              />
-              <div className="font-semibold text-black flex flex-col">
-                <span className="text-white font-bold">{message.user} :</span>
-                <span className="bg-black/20 mx-[10px] px-4 py-[5px] rounded-3xl w-fit mt-1 break-words max-w-[300px]">
+              <div className="font-semibold flex flex-col">
+                <div className="flex items-center gap-1.5">
+                  <img
+                    src={message.userAvthr}
+                    alt="logo"
+                    className="rounded-full flex w-10"
+                  />
+                  <span className="text-[#fc6e20] flex font-bold">
+                    {message.user} :
+                  </span>
+                </div>
+                <span className="bg-black/20 mx-[30px] px-4 py-[5px] text-[#ffe7d0]  rounded-3xl w-fit mt-1 break-words max-w-[300px]">
                   {message.text}
                 </span>
               </div>
@@ -120,11 +143,11 @@ export const Chat = (props) => {
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className="bg-white/50 backdrop-blur-md h-[8vh] border-2 border-black flex w-[80%] rounded-l-4xl "
+            className="bg-[#323232]/50 backdrop-blur-md h-[6vh] border-2 border-[#ffe7d0] flex w-[80%] rounded-l-3xl "
           />
           <button
             type="submit"
-            className="flex items-center bg-green-500 px-7 border-2 border-black rounded-r-3xl"
+            className="flex items-center bg-[#fc6e20] px-7 border-2 border-[#ffe7d0] rounded-r-3xl"
           >
             <SendHorizontalIcon color="white" />
           </button>
