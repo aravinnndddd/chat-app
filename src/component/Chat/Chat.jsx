@@ -136,7 +136,7 @@ export const Chat = (props) => {
                     </span>
                   </span>
                 </div>
-                <span className="bg-[#323232] mx-[50px] px-[15px] py-[15px] text-[#dddddd]  rounded-3xl  w-[300px] mt-1 break-words md:w-[]">
+                <span className="bg-[#323232] mx-[50px] px-[15px] py-[15px] text-[#dddddd]  rounded-3xl  w-[280px] mt-1 break-words md:w-[500px] ">
                   {message.text}
                 </span>
               </div>
