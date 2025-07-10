@@ -112,7 +112,7 @@ export const Chat = (props) => {
         </div>
       </div>
       <div className="flex items-center flex-col bg-[#131313] overflow-x-hidden justify-start pt-[10vh] pb-[15vh] min-h-screen">
-        <div className="w-full overflow-auto overflow-x-hidden">
+        <div className="w-full overflow-auto ">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -136,7 +136,7 @@ export const Chat = (props) => {
                     </span>
                   </span>
                 </div>
-                <span className="bg-[#323232] mx-[50px] px-[15px] py-[15px] text-[#dddddd]  rounded-3xl  w-[300px] mt-1 break-words md:w-fit">
+                <span className="bg-[#323232] mx-[50px] px-[15px] py-[15px] text-[#dddddd]  rounded-3xl  w-[300px] mt-1 break-words md:w-[]">
                   {message.text}
                 </span>
               </div>
