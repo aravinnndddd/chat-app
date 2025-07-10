@@ -5,6 +5,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
@@ -41,9 +42,11 @@ export const Chat = (props) => {
     if (newMessage === "") return;
     await addDoc(messagesRef, {
       text: newMessage,
-      createdAt: serverTimestamp(),
+      // createdAt: serverTimestamp(),
+      createdAt: Timestamp.now(),
       user: auth.currentUser.displayName,
       userAvthr: auth.currentUser.photoURL,
+
       room,
     });
 
@@ -77,7 +80,7 @@ export const Chat = (props) => {
     <>
       <div>
         <div className="flex justify-between items-end fixed top-0 h-[10vh] py-2 px-10 bg-black/50 w-full backdrop-blur-md">
-          <h1 className="font-extrabold flex items-center  text-[1.5rem] px-10 text-white">
+          <h1 className="font-extrabold flex items-center text-[1.2rem] md:text-[1.5rem] md:px-10 text-white">
             Copy your secret Key{" "}
             <span className="ml-2">
               {" "}
@@ -108,12 +111,12 @@ export const Chat = (props) => {
           )}
         </div>
       </div>
-      <div className="flex items-center flex-col bg-[#1b1b1b] justify-start pt-[10vh] pb-[15vh] min-h-screen">
-        <div className="w-full overflow-auto">
+      <div className="flex items-center flex-col bg-[#131313] overflow-x-hidden justify-start pt-[10vh] pb-[15vh] min-h-screen">
+        <div className="w-full overflow-auto overflow-x-hidden">
           {messages.map((message) => (
             <div
               key={message.id}
-              className=" mt-5 flex items-center py-1 px-10 gap-2"
+              className=" mt-5 flex items-center py-1 px-5 gap-2"
             >
               <div className="font-semibold flex flex-col">
                 <div className="flex items-center gap-1.5">
@@ -124,9 +127,16 @@ export const Chat = (props) => {
                   />
                   <span className="text-[#fc6e20] flex font-bold">
                     {message.user} :
+                    <span className=" ml-3 text-[#323232] font-normal">
+                      {" "}
+                      {message.createdAt.toDate().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
                   </span>
                 </div>
-                <span className="bg-black/20 mx-[30px] px-4 py-[5px] text-[#ffe7d0]  rounded-3xl w-fit mt-1 break-words max-w-[300px]">
+                <span className="bg-[#323232] mx-[50px] px-[15px] py-[15px] text-[#dddddd]  rounded-3xl  w-[300px] mt-1 break-words md:w-fit">
                   {message.text}
                 </span>
               </div>
@@ -143,11 +153,11 @@ export const Chat = (props) => {
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className="bg-[#323232]/50 backdrop-blur-md h-[6vh] border-2 border-[#ffe7d0] flex w-[80%] rounded-l-3xl "
+            className="bg-[#323232]/50 backdrop-blur-md h-[6vh] border-2 px-10 text-white border-[#ffe7d0] flex w-[80%] md:w-[50%] rounded-3xl md:justify-end"
           />
           <button
             type="submit"
-            className="flex items-center bg-[#fc6e20] px-7 border-2 border-[#ffe7d0] rounded-r-3xl"
+            className="flex items-center bg-[#fc6e20] px-7 border-2 border-[#ffe7d0] rounded-3xl"
           >
             <SendHorizontalIcon color="white" />
           </button>
