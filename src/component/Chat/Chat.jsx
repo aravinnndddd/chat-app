@@ -42,7 +42,7 @@ export const Chat = (props) => {
     if (newMessage === "") return;
     await addDoc(messagesRef, {
       text: newMessage,
-      // createdAt: serverTimestamp(),
+  
       createdAt: Timestamp.now(),
       user: auth.currentUser.displayName,
       userAvthr: auth.currentUser.photoURL,
